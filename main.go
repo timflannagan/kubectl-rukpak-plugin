@@ -20,13 +20,11 @@ import (
 
 func main() {
 	var (
-		bundleName      string
 		systemNamespace string
 	)
-
 	cmd := &cobra.Command{
 		Use:   "evaluate",
-		Args:  cobra.ExactArgs(0),
+		Args:  cobra.ExactArgs(1),
 		Short: "Evaluate an individual rukpak Bundle's unpacked contents to stdout",
 		Long: `
 A kubectl plugin that's responsible for inspecting an individual plain-v0 rukpak Bundle's unpacked
@@ -46,7 +44,7 @@ $ make plugin
 
 Example usage:
 
-$ kubectl bundle evaluate --bundle combo-v0.0.1
+$ kubectl bundle evaluate combo-v0.0.1
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -67,7 +65,8 @@ metadata:
   namespace: combo
 ...
 `,
-		RunE: func(cmd *cobra.Command, _ []string) error {
+		RunE: func(cmd *cobra.Command, args []string) error {
+			bundleName := args[0]
 			if bundleName == "" {
 				return fmt.Errorf("validation error: --bundle cannot be empty")
 			}
@@ -110,8 +109,6 @@ metadata:
 			return err
 		},
 	}
-
-	cmd.Flags().StringVar(&bundleName, "bundle", "", "Configures which Bundle resources to unpack")
 	cmd.Flags().StringVar(&systemNamespace, "namespace", "rukpak-system", "Configures the namespace to find the Bundle underlying resources")
 
 	if err := cmd.Execute(); err != nil {
