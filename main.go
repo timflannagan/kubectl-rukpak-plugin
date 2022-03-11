@@ -38,6 +38,12 @@ of compressed ConfigMaps, where each ConfigMap contains a compressed version of 
 This plugin helps simply the process of finding that list of underlying ConfigMap(s), decoding their contents,
 and aggregating each of those contents into a single YAML stream to the stdout file descriptor.
 
+Installing this plugin:
+
+$ git clone https://github.com/timflannagan/kubectl-rukpak-plugin
+$ cd kubectl-rukpak-plugin
+$ make plugin
+
 Example usage:
 
 $ kubectl bundle evaluate --bundle combo-v0.0.1
