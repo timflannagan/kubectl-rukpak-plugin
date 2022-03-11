@@ -8,4 +8,4 @@ bin/evaluate:
 
 plugin: bin/evaluate
 	@sudo cp $(OUTPUT_BIN) /usr/local/bin
-	@kubectl bundle evaluate --help || (echo "failed to find the custom plugin in kubectl plugin path"; exit 1)
+	@kubectl bundle evaluate --help > /dev/null || (echo "failed to find the custom plugin in kubectl plugin path"; exit 1)
