@@ -25,11 +25,48 @@ func main() {
 	)
 
 	cmd := &cobra.Command{
-		Use:  "evaluate",
-		Args: cobra.ExactArgs(0),
+		Use:   "evaluate",
+		Args:  cobra.ExactArgs(0),
+		Short: "Evaluate an individual rukpak Bundle's unpacked contents to stdout",
+		Long: `
+A kubectl plugin that's responsible for inspecting an individual plain-v0 rukpak Bundle's unpacked
+contents that the core.rukpak.io/plain-v0 provisioner has stored on-cluster.
+
+By default, the core.rukpak.io/plain-v0 provisioner sources and unpacks rukpak Bundle(s) to a series
+of compressed ConfigMaps, where each ConfigMap contains a compressed version of a Kubernetes manifest.
+
+This plugin helps simply the process of finding that list of underlying ConfigMap(s), decoding their contents,
+and aggregating each of those contents into a single YAML stream to the stdout file descriptor.
+
+Example usage:
+
+$ kubectl bundle evaluate --bundle combo-v0.0.1
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: combo
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: combo-operator
+  namespace: combo
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: combo
+  name: combo-operator
+  namespace: combo
+...
+`,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			if bundleName == "" {
-				return fmt.Errorf("--bundle cannot be empty")
+				return fmt.Errorf("validation error: --bundle cannot be empty")
+			}
+			if systemNamespace == "" {
+				return fmt.Errorf("validation error: --namespace cannot be empty")
 			}
 
 			config := ctrl.GetConfigOrDie()
